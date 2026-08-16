@@ -73,3 +73,27 @@ for example, if we had two Posts in a database:
 
 #### Filtering Objects
 
+The manager's **_filter()_** method is used to filter a QuerySet. It specifies the content of a SQL **WHERE** clause by using field lookups.
+
+For example:
+
+```python
+Post.objects.filter(title='Another Post')
+```
+
+This searches for an exact match, so if there's any post with 'Another Post' as the title, it will be returned.
+
+We can review the generated SQL of a QuerySet accessing the QuerySet's instance **_query_** attribute:
+
+```python
+posts = Post.objects.filter(title='Another Post')
+print(posts.query)
+```
+
+And this would show the full SQL produced, for example:
+
+```sql
+SELECT “blog_post”.”id”, “blog_post”.”title”, “blog_post”.”slug”, “blog_ post”.”author_id”, “blog_post”.”body”, “blog_post”.”publish”, “blog_ post”.”created”, “blog_post”.”updated”, “blog_post”.”status” FROM “blog_post” WHERE “blog_post”.”title” = Another Post
+```
+
+Note: the **_order_by_** above 
