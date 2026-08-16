@@ -219,3 +219,110 @@ We can also filter by multiple fields:
 ```python
 Post.objects.filter(author__username__startswith='ad', publish__year=2026)
 ```
+
+### Chaining Filters
+
+As the result of a filtered QuerySet is another QuerySet, we can chain them together.
+
+```python
+Post.objects.filter(publish__year=2026).filter(author__username='admin')
+```
+
+### Excluding Objects
+
+We can exclude certain results from our QuerySet as well:
+
+```python
+Post.objects.filter(publish__year=2026).exclude(title__startswith='Another')
+```
+
+### Ordering Objects
+
+The default order is defined in the ordering option of the model's _Meta_ (check **models.py**), but it can be overrided by using the **_order_by_** method of the manager. It can be done in ascending, descending or in random order, and it can also support multiple fields:
+
+```python
+# Ascending order is implied here
+Post.objects.order_by('title')
+
+# Descending order is indicated with a minus sign
+Post.objects.order_by('-title')
+
+# Order by multiple fields: in this case, order by author, then order by title
+Post.objects.order_by('author', 'title')
+
+# Return in a random order
+Post.object.order_by('?')
+```
+
+### Limiting QuerySets
+
+The number of results can be limited. The following example translates the SQL **_LIMIT_** clause.
+
+```python
+# "SELECT * FROM Post LIMIT 5"
+Post.objects.all()[:5]
+```
+
+We can also translate the **_OFFSET_** clause, and even combine with limit:
+
+```python
+# "SELECT * FROM Post OFFSET 3 LIMIT 5"
+# That means, it returns from the 3th result until the 5th
+Post.objects.all()[3:5]
+```
+
+For a single object, the index can be used instead of slicing:
+
+```python
+Post.objects.all()[3]
+```
+
+### Counting Objects
+
+For counting the total number of objects returned, we can use the **_count()_** method:
+
+```python
+Post.objects.filter(id_lt=3).count()
+```
+
+### Check if an Object Exists
+
+We use the **_exists()_** method:
+
+```python
+Post.objects.filter(title__startswith='Why').exists()
+```
+
+### Deleting Objects
+
+Delete an object (and any consequent object due to dependent relashionship for Foreign Key) is done with the **_delete()_** method.
+
+```python
+post = Post.objects.get(id=1)
+post.delete()
+```
+
+### Complex Lookups with Q Objects
+
+All the lookups we used above are joined with a SQL 'AND'. 
+If we want something more complex, like an 'OR', we can use Q objects like this:
+
+```python
+from django.db.models import Q
+
+starts_who = Q(title__istartswith='who')
+starts_why = Q(title__istartswith='why')
+
+# The OR statement
+Post.objects.filter(starts_who | starts_why) 
+```
+
+### When QuerySets Are Evaluated
+
+QuerySets will usually return another unevaluated QuerySet. It is only evaluated in these situations:
+
+* The first time you iterate over them
+* When you pickle or cache them
+* When you call repr() or len() on them
+* When you explicitly call list() on them
+* When you test them in a statement, such as bool(), or, and, or if
