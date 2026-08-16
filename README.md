@@ -43,8 +43,33 @@ user, created = User.objects.get_or_create(username='another-user')
 
 #### Updating Objects
 
+To update an object, retrieve it from the database, change what you need, then call the object's _save()_ method.
+
 ```python
 post_to_update = Post.objects.get(title='One More Post')
 post_to_update.title = 'Updated title'
 post_to_update.save()
 ```
+
+#### Retrieving Objects
+
+To retrieve all objects of a particular model:
+
+```python
+all_posts = Post.objects.all()
+```
+
+Above, '_objects_' is a manager. In Django, each model has at least one manager, and 'objects' is how the default one is called. The return type of a model manager operation is a **QuerySet**. It returns something like this:
+
+```
+<QuerySet [<model>: <model object's to_string>, ...]>
+```
+
+for example, if we had two Posts in a database:
+
+```
+<QuerySet [<Post: This is a post title>, <Post: This is a title from a different post>]>
+```
+
+#### Filtering Objects
+
