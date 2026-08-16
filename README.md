@@ -40,3 +40,11 @@ We can also search for an object, and if it doesn't exist, create it first and t
 ```python
 user, created = User.objects.get_or_create(username='another-user')
 ```
+
+#### Updating Objects
+
+```python
+post_to_update = Post.objects.get(title='One More Post')
+post_to_update.title = 'Updated title'
+post_to_update.save()
+```
