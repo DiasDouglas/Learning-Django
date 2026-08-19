@@ -2,6 +2,10 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=Post.Status.PUBLISHED)
+
 class Post(models.Model):
     class Status(models.TextChoices):   # Kinda like an'Enum'
         DRAFT = 'DF', 'Draft'           # 'DF' is the value, 'Draft' is the readable name (label)
@@ -24,6 +28,9 @@ class Post(models.Model):
         choices=Status,
         default=Status.DRAFT
     )
+
+    objects = models.Manager()
+    published = PublishedManager()
 
     # This class defines metadata for the model
     class Meta:
